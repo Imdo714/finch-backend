@@ -2,5 +2,23 @@ spring:
   application:
     name: finch-kotlin
 
+  # Database 설정
+  datasource:
+    url: "${DB_URL}"
+    username: "${DB_NAME}"
+    password: "${DB_PWD}"
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  # JPA 설정
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        use_sql_comments: true
+    open-in-view: false
+
 server:
   port: 8080
