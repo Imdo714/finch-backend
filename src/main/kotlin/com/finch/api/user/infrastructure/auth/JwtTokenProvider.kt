@@ -4,6 +4,7 @@ import com.finch.api.user.application.port.out.TokenProvider
 import io.jsonwebtoken.Claims
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.security.Keys
+import jakarta.servlet.http.HttpServletRequest
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
 import java.nio.charset.StandardCharsets
@@ -45,6 +46,14 @@ class JwtTokenProvider(
         return createToken(claims, RefreshTokenExpiration)
     }
 
+    /** 헤더에서 토큰 값 추출 */
+    override fun extractBearerToken(request: HttpServletRequest): String? {
+        val bearer = request.getHeader("Authorization");
+
+        return bearer.takeIf { it.startsWith("Bearer ") }
+            ?.substring(7)
+    }
+
     /** 토큰 생성을 위한 서명키 메서드 */
     private fun createToken(claims: Claims, expiration: Long): String {
         val now = Date()
@@ -57,7 +66,5 @@ class JwtTokenProvider(
             .signWith(getSigningKey(), Jwts.SIG.HS256)
             .compact()
     }
-
-
 
 }
