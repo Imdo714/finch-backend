@@ -23,6 +23,17 @@ dependencies {
     // security
     implementation("org.springframework.boot:spring-boot-starter-security")
 
+    // validation
+    implementation("org.springframework.boot:spring-boot-starter-validation")
+
+    // Kotlin
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
+    implementation("org.jetbrains.kotlin:kotlin-reflect")
+
+    // Lombok
+    compileOnly("org.projectlombok:lombok")
+    kapt("org.projectlombok:lombok")
+
     // JWT
     implementation("io.jsonwebtoken:jjwt-api:0.12.3")
     runtimeOnly("io.jsonwebtoken:jjwt-impl:0.12.3")
@@ -34,7 +45,6 @@ dependencies {
     // QueryDSL
     implementation("com.querydsl:querydsl-jpa:5.0.0:jakarta")
     kapt("com.querydsl:querydsl-apt:5.0.0:jakarta")
-
 
     // Test
     testImplementation("org.springframework.boot:spring-boot-starter-test")
