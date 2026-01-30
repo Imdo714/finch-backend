@@ -4,8 +4,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 
 @SpringBootApplication
-class EcommerceApplication
+class FinchApplication
 
 fun main(args: Array<String>) {
-    runApplication<EcommerceApplication>(*args)
+    runApplication<FinchApplication>(*args)
 }

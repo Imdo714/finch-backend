@@ -22,3 +22,9 @@ spring:
 
 server:
   port: 8080
+
+cors:
+  origin:
+    local: "${CORS_ORIGIN_LOCAL}"
+    development: "${CORS_ORIGIN_DEVELOPMENT}"
+    production: "${CORS_ORIGIN_PRODUCTION}"
