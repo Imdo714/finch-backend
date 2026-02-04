@@ -52,8 +52,13 @@ class SocialLoginService(
     }
 
     @Transactional
-    override fun appleWebSocialLogin(code: String) {
+    override fun appleWebSocialLogin(code: String): LoginResponse {
         val clientSecret = appleClientSecret.createAppleWebClientSecret()
+        val appleAuthToken = appleClientSecret.getAppleWebAuthToken(code, clientSecret)
+        val appleUserInfo = appleClientSecret.getAppleUserInfo(appleAuthToken.idToken)
+
+        val user = registerOrLogin(appleUserInfo, appleAuthToken.refreshToken, Provider.APPLE)
+        return loginResponseMapper.toLoginResponse(user)
     }
 
     private fun registerOrLogin(

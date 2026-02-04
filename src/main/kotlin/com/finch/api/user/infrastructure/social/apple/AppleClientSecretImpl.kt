@@ -58,30 +58,11 @@ class AppleClientSecretImpl(
     }
 
     override fun getAppleAuthToken(code: String, clientSecret: String): AppleTokenResponse {
-        val params: MultiValueMap<String, String> = LinkedMultiValueMap<String, String>().apply {
-            add("client_id", clientId)
-            add("client_secret", clientSecret)
-            add("code", code)
-            add("grant_type", "authorization_code")
-        }
+        return requestAppleToken(clientId, code, clientSecret)
+    }
 
-        val responseBody = restClient.post()
-            .uri(APPLE_TOKEN_URL)
-            .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-            .body(params)
-            .retrieve()
-            .onStatus(HttpStatusCode::is4xxClientError) { _, response ->
-                log.error { "[AppleAuth] 토큰 발급 실패 (4xx) - 상태코드: ${response.statusCode}, 내용: ${String(response.body.readAllBytes())}" }
-                throw InvalidAuthorizationException()
-            }
-            .onStatus(HttpStatusCode::is5xxServerError) { _, response ->
-                log.error { "[AppleAuth] 토큰 발급 실패 (5xx) - 상태코드: ${response.statusCode}, 내용: ${String(response.body.readAllBytes())}" }
-                throw AppleTokenIssueFailedException()
-            }
-            .body(AppleTokenResponse::class.java)
-
-        return responseBody?.takeIf { it.accessToken != null }
-            ?: throw AppleInvalidTokenResponseException()
+    override fun getAppleWebAuthToken(code: String, clientSecret: String): AppleTokenResponse {
+        return requestAppleToken(clientServiceId, code, clientSecret)
     }
 
     override fun getAppleUserInfo(idToken: String): AppleUserInfoDto {
@@ -110,6 +91,33 @@ class AppleClientSecretImpl(
             .expiration(expiration)           // exp
             .signWith(getPrivateKey())  // 서명
             .compact()
+    }
+
+    private fun requestAppleToken(id: String, code: String, clientSecret: String): AppleTokenResponse {
+        val params: MultiValueMap<String, String> = LinkedMultiValueMap<String, String>().apply {
+            add("client_id", id)
+            add("client_secret", clientSecret)
+            add("code", code)
+            add("grant_type", "authorization_code")
+        }
+
+        val responseBody = restClient.post()
+            .uri(APPLE_TOKEN_URL)
+            .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+            .body(params)
+            .retrieve()
+            .onStatus(HttpStatusCode::is4xxClientError) { _, response ->
+                log.error { "[AppleAuth] 토큰 발급 실패 (4xx) - 상태코드: ${response.statusCode}" }
+                throw InvalidAuthorizationException()
+            }
+            .onStatus(HttpStatusCode::is5xxServerError) { _, response ->
+                log.error { "[AppleAuth] 토큰 발급 서버 오류 (5xx) - 상태코드: ${response.statusCode}" }
+                throw AppleTokenIssueFailedException()
+            }
+            .body(AppleTokenResponse::class.java)
+
+        return responseBody?.takeIf { it.accessToken != null }
+            ?: throw AppleInvalidTokenResponseException()
     }
 
     private fun parsePayload(idToken: String): AppleTokenPayload {
