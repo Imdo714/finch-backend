@@ -18,5 +18,7 @@ enum class ErrorCode(
 
     /** Apple Social Login */
     APPLE_INVALID_PRIVATE_KEY(500, "APPLE_INVALID_PRIVATE_KEY", "Apple Private Key 생성에 실패했습니다. 키 형식을 확인하세요."),
+    APPLE_TOKEN_ISSUE_FAILED(502, "APPLE_TOKEN_ISSUE_FAILED", "애플 토큰 발급 서버에 문제가 발생했습니다."),
+    APPLE_INVALID_TOKEN_RESPONSE(400, "APPLE_INVALID_TOKEN_RESPONSE", "애플 토큰 발급 응답이 올바르지 않습니다."),
 
 }

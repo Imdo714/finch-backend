@@ -1,10 +1,20 @@
 package com.finch.api.user.infrastructure.social.apple
 
 import com.finch.api.user.application.port.out.AppleClientSecret
+import com.finch.api.user.infrastructure.social.apple.dto.AppleTokenResponse
+import com.finch.global.exception.handleException.AppleInvalidTokenResponseException
+import com.finch.global.exception.handleException.AppleTokenIssueFailedException
 import com.finch.global.exception.handleException.InvalidApplePrivateKeyException
+import com.finch.global.exception.handleException.InvalidAuthorizationException
+import io.github.oshai.kotlinlogging.KotlinLogging
 import io.jsonwebtoken.Jwts
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.http.HttpStatusCode
+import org.springframework.http.MediaType
 import org.springframework.stereotype.Component
+import org.springframework.util.LinkedMultiValueMap
+import org.springframework.util.MultiValueMap
+import org.springframework.web.client.RestClient
 import java.security.KeyFactory
 import java.security.PrivateKey
 import java.security.spec.PKCS8EncodedKeySpec
@@ -13,6 +23,7 @@ import java.util.Date
 
 @Component
 class AppleClientSecretImpl(
+
     @Value("\${APPLE_TEAM_ID}")
     private val teamId: String,
 
@@ -23,9 +34,16 @@ class AppleClientSecretImpl(
     private val clientId: String,
 
     @Value("\${APPLE_PRIVATE_KEY}")
-    private val privateKeyP8: String
+    private val privateKeyP8: String,
+
+    private val restClient: RestClient = RestClient.create()
 
 ): AppleClientSecret {
+
+    companion object {
+        private const val APPLE_TOKEN_URL = "https://appleid.apple.com/auth/token"
+        private const val APPLE_AUDIENCE_URL = "https://appleid.apple.com"
+    }
 
     override fun createAppleClientSecret(): String {
         val now = Date()
@@ -35,7 +53,7 @@ class AppleClientSecretImpl(
             .header()
             .keyId(keyId).and()          // kid
             .issuer(teamId)              // iss
-            .audience().add("https://appleid.apple.com").and() // aud
+            .audience().add(APPLE_AUDIENCE_URL).and() // aud
             .subject(clientId)          // sub
             .issuedAt(now)               // iat
             .expiration(expiration)           // exp
@@ -43,6 +61,32 @@ class AppleClientSecretImpl(
             .compact()
     }
 
+    override fun getAppleAuthToken(code: String, clientSecret: String): AppleTokenResponse {
+        val params: MultiValueMap<String, String> = LinkedMultiValueMap<String, String>().apply {
+            add("client_id", clientId)
+            add("client_secret", clientSecret)
+            add("code", code)
+            add("grant_type", "authorization_code")
+        }
+
+        val responseBody = restClient.post()
+            .uri(APPLE_TOKEN_URL)
+            .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+            .body(params)
+            .retrieve()
+            .onStatus(HttpStatusCode::is4xxClientError) { _, response ->
+                log.error { "[AppleAuth] 토큰 발급 실패 (4xx) - 상태코드: ${response.statusCode}, 내용: ${String(response.body.readAllBytes())}" }
+                throw InvalidAuthorizationException()
+            }
+            .onStatus(HttpStatusCode::is5xxServerError) { _, response ->
+                log.error { "[AppleAuth] 토큰 발급 실패 (5xx) - 상태코드: ${response.statusCode}, 내용: ${String(response.body.readAllBytes())}" }
+                throw AppleTokenIssueFailedException()
+            }
+            .body(AppleTokenResponse::class.java)
+
+        return responseBody?.takeIf { it.accessToken != null }
+            ?: throw AppleInvalidTokenResponseException()
+    }
 
     private fun getPrivateKey(): PrivateKey {
         return try {
@@ -65,3 +109,5 @@ class AppleClientSecretImpl(
     }
 
 }
+
+private val log = KotlinLogging.logger {}
