@@ -12,6 +12,7 @@ import com.finch.api.user.domain.service.UserDomainService
 import com.finch.api.user.presentation.dto.request.KakaoAppAuthRequest
 import com.finch.api.user.presentation.dto.response.LoginResponse
 import com.finch.global.common.domain.enums.Provider
+import io.github.oshai.kotlinlogging.KotlinLogging
 import jakarta.transaction.Transactional
 import org.springframework.stereotype.Service
 
@@ -54,8 +55,12 @@ class SocialLoginService(
     }
 
     @Transactional
-    override fun googleSocialLogin(code: String) {
-        val googleAccessToken = googleClientSecret.getGoogleAccessToken(code)
+    override fun googleSocialLogin(code: String): LoginResponse {
+        val googleToken = googleClientSecret.getGoogleAccessToken(code)
+        val googleUserInfo = googleClientSecret.getGoogleUserInfo(googleToken.accessToken)
+
+        val user = registerOrLogin(googleUserInfo, googleToken.refreshToken?: "", Provider.GOOGLE)
+        return loginResponseMapper.toLoginResponse(user)
     }
 
     private fun appleSocialLogin(code: String, isWeb: Boolean): LoginResponse {
@@ -78,3 +83,5 @@ class SocialLoginService(
     }
 
 }
+
+private val log = KotlinLogging.logger {}

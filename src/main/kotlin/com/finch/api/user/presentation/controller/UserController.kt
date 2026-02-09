@@ -44,11 +44,11 @@ class UserController(
         return BaseResponse.ok(socialLoginUseCase.appleWebSocialLogin(request.code))
     }
 
-    @PostMapping("/login/web")
+    @PostMapping("/google/login/web")
     fun googleLogin(
         @RequestBody request: AuthCodeRequest
-    ) {
-        socialLoginUseCase.googleSocialLogin(request.code)
+    ): BaseResponse<LoginResponse> {
+        return BaseResponse.ok(socialLoginUseCase.googleSocialLogin(request.code))
     }
 
 }

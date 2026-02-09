@@ -5,6 +5,7 @@ enum class Provider(
 ) {
 
     KAKAO("Kakao"),
-    APPLE("Apple")
+    APPLE("Apple"),
+    GOOGLE("Google")
 
 }

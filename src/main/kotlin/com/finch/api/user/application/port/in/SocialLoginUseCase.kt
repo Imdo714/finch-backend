@@ -18,6 +18,6 @@ interface SocialLoginUseCase {
     fun appleWebSocialLogin(code: String): LoginResponse
     
     /** 구글 소셜 로그인 */
-    fun googleSocialLogin(code: String)
+    fun googleSocialLogin(code: String): LoginResponse
 
 }

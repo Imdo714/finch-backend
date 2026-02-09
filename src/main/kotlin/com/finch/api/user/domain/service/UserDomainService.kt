@@ -2,6 +2,7 @@ package com.finch.api.user.domain.service
 
 import com.finch.api.user.domain.entity.User
 import com.finch.api.user.infrastructure.social.apple.dto.AppleUserInfoDto
+import com.finch.api.user.infrastructure.social.google.dto.GoogleUserInfoDto
 import com.finch.api.user.infrastructure.social.kakao.dto.KakaoUserInfoDto
 import com.finch.global.common.domain.enums.Provider
 import io.github.oshai.kotlinlogging.KotlinLogging
@@ -28,6 +29,7 @@ class UserDomainService {
         return when (provider) {
             Provider.KAKAO -> User.createKakaoUserBuilder(info as KakaoUserInfoDto, token)
             Provider.APPLE -> User.createAppleUserBuilder(info as AppleUserInfoDto, token)
+            Provider.GOOGLE -> User.createGoogleUserBuilder(info as GoogleUserInfoDto, token)
         }
     }
 

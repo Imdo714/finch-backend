@@ -41,7 +41,7 @@ class SecurityConfig(
             .authorizeHttpRequests { auth ->
                 auth
                     .requestMatchers("/health", "/user/kakao/login/web", "/user/kakao/login/app",
-                        "/user/apple/login/app", "/user/apple/login/web"
+                        "/user/apple/login/app", "/user/apple/login/web", "/user/google/login/web"
                     ).permitAll()
                     .anyRequest().authenticated()
             }

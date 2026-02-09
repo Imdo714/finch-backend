@@ -5,13 +5,13 @@ import com.fasterxml.jackson.annotation.JsonProperty
 data class GoogleTokenDto(
 
     @get:JsonProperty("access_token")
-    val accessToken: String?,
+    val accessToken: String,
 
     @get:JsonProperty("expires_in")
-    val expiresIn: Int?,
+    val expiresIn: Int,
 
     @get:JsonProperty("scope")
-    val scope: String?,
+    val scope: String,
 
     @get:JsonProperty("token_type")
     val tokenType: String?,

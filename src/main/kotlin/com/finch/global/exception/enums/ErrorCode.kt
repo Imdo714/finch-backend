@@ -25,4 +25,5 @@ enum class ErrorCode(
     /** Google Social Login */
     GOOGLE_TOKEN_ISSUE_FAILED(502, "GOOGLE_TOKEN_ISSUE_FAILED", "구글 토큰 발급 서버에 문제가 발생했습니다."),
     GOOGLE_INVALID_TOKEN_RESPONSE(400, "GOOGLE_INVALID_TOKEN_RESPONSE", "구글 토큰 발급 응답이 올바르지 않습니다."),
+    GOOGLE_USER_INFO_RETRIEVE_FAILED(400, "GOOGLE_USER_INFO_RETRIEVE_FAILED", "구글 유저 정보를 불러오는데 실패했습니다."),
 }

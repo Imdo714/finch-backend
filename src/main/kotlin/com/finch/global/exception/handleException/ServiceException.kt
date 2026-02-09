@@ -26,3 +26,4 @@ class AppleTokenMalformedException : ServiceException(ErrorCode.APPLE_TOKEN_MALF
 /** 구글 */
 class GoogleTokenIssueFailedException : ServiceException(ErrorCode.GOOGLE_TOKEN_ISSUE_FAILED)
 class GoogleInvalidTokenResponseException : ServiceException(ErrorCode.GOOGLE_INVALID_TOKEN_RESPONSE)
+class GoogleInvalidUserResponseException : ServiceException(ErrorCode.GOOGLE_USER_INFO_RETRIEVE_FAILED)
