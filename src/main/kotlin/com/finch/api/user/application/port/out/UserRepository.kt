@@ -9,5 +9,8 @@ interface UserRepository {
     
     /** User Entity 저장 */
     fun save(user: User): User
+    
+    /** Email 있는지 여부 확인 */
+    fun existsByEmail(email: String): Boolean
 
 }

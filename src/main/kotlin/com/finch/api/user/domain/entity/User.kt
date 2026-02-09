@@ -3,6 +3,7 @@ package com.finch.api.user.domain.entity
 import com.finch.api.user.infrastructure.social.apple.dto.AppleUserInfoDto
 import com.finch.api.user.infrastructure.social.google.dto.GoogleUserInfoDto
 import com.finch.api.user.infrastructure.social.kakao.dto.KakaoUserInfoDto
+import com.finch.api.user.presentation.dto.request.SignUpRequest
 import com.finch.global.common.domain.enums.Currency
 import com.finch.global.common.domain.enums.Provider
 import com.finch.global.common.domain.enums.Role
@@ -22,20 +23,23 @@ class User(
     val id: Long,
 
     @Column(unique = true)
-    val email: String?,
+    val email: String? = null,
+
+    @Column(name = "password")
+    var password: String? = null,
 
     @Column(nullable = false)
     var name: String,
 
     @Column(name = "profile_image_url")
-    var profileImageUrl: String?,
+    var profileImageUrl: String? = null,
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     val provider: Provider,
 
     @Column(name = "provider_id", nullable = false)
-    val providerId: String,
+    val providerId: String?,
 
     @Column(name = "social_refresh")
     var socialRefresh: String? = null,
@@ -59,6 +63,7 @@ class User(
             return User(
                 id = 0L,
                 email = kakaoUser.email,
+                password = "",
                 name = kakaoUser.name ?: "카카오 사용자",
                 profileImageUrl = kakaoUser.profileImageUrl,
                 providerId = kakaoUser.providerId,
@@ -73,6 +78,7 @@ class User(
             return User(
                 id = 0L,
                 email = appleUser.email ?: "",
+                password = "",
                 name = "애플 사용자",
                 profileImageUrl = "",
                 providerId = appleUser.providerId,
@@ -87,11 +93,27 @@ class User(
             return User(
                 id = 0L,
                 email = googleUser.email,
+                password = "",
                 name = googleUser.name ?: "구글 사용자",
                 profileImageUrl = googleUser.picture ?: "",
                 providerId = googleUser.providerId,
                 provider = Provider.GOOGLE,
                 socialRefresh = socialRefreshToken,
+                currency = Currency.KRW,
+                role = Role.PENDING
+            )
+        }
+
+        fun createFormUserBuilder(request: SignUpRequest, encodedPassword: String): User {
+            return User(
+                id = 0L,
+                email = request.email,
+                password = encodedPassword,
+                name = request.name,
+                profileImageUrl = "",
+                providerId = "",
+                provider = Provider.LOCAL,
+                socialRefresh = "",
                 currency = Currency.KRW,
                 role = Role.PENDING
             )

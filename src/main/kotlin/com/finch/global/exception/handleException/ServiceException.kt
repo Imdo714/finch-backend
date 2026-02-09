@@ -10,6 +10,7 @@ open class ServiceException (
 /** Global (공통) */
 class ServerException : ServiceException(ErrorCode.INTERNAL_SERVER_ERROR)
 class InvalidAuthorizationException : ServiceException(ErrorCode.INVALID_AUTHORIZATION_CODE)
+class InvalidAuthProviderException : ServiceException(ErrorCode.INVALID_AUTH_PROVIDER_EXCEPTION)
 
 /** 카카오 */
 class KakaoTokenIssueFailedException : ServiceException(ErrorCode.KAKAO_TOKEN_ISSUE_FAILED)
@@ -27,3 +28,7 @@ class AppleTokenMalformedException : ServiceException(ErrorCode.APPLE_TOKEN_MALF
 class GoogleTokenIssueFailedException : ServiceException(ErrorCode.GOOGLE_TOKEN_ISSUE_FAILED)
 class GoogleInvalidTokenResponseException : ServiceException(ErrorCode.GOOGLE_INVALID_TOKEN_RESPONSE)
 class GoogleInvalidUserResponseException : ServiceException(ErrorCode.GOOGLE_USER_INFO_RETRIEVE_FAILED)
+
+/** User */
+class DuplicateEmailException : ServiceException(ErrorCode.DUPLICATE_EMAIL_EXCEPTION)
+

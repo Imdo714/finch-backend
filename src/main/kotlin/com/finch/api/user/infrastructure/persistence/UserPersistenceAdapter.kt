@@ -17,5 +17,9 @@ class UserPersistenceAdapter(
         return userJpaRepository.save(user)
     }
 
+    override fun existsByEmail(email: String): Boolean {
+        return userJpaRepository.existsByEmail(email)
+    }
+
 
 }
