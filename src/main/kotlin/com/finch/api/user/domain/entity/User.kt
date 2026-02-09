@@ -1,6 +1,7 @@
 package com.finch.api.user.domain.entity
 
 import com.finch.api.user.infrastructure.social.apple.dto.AppleUserInfoDto
+import com.finch.api.user.infrastructure.social.google.dto.GoogleUserInfoDto
 import com.finch.api.user.infrastructure.social.kakao.dto.KakaoUserInfoDto
 import com.finch.global.common.domain.enums.Currency
 import com.finch.global.common.domain.enums.Provider
@@ -76,6 +77,20 @@ class User(
                 profileImageUrl = "",
                 providerId = appleUser.providerId,
                 provider = Provider.APPLE,
+                socialRefresh = socialRefreshToken,
+                currency = Currency.KRW,
+                role = Role.PENDING
+            )
+        }
+
+        fun createGoogleUserBuilder(googleUser: GoogleUserInfoDto, socialRefreshToken: String): User {
+            return User(
+                id = 0L,
+                email = googleUser.email,
+                name = googleUser.name ?: "구글 사용자",
+                profileImageUrl = googleUser.picture ?: "",
+                providerId = googleUser.providerId,
+                provider = Provider.GOOGLE,
                 socialRefresh = socialRefreshToken,
                 currency = Currency.KRW,
                 role = Role.PENDING
