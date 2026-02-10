@@ -5,6 +5,7 @@ import com.finch.api.user.infrastructure.social.apple.dto.AppleUserInfoDto
 import com.finch.api.user.infrastructure.social.google.dto.GoogleUserInfoDto
 import com.finch.api.user.infrastructure.social.kakao.dto.KakaoUserInfoDto
 import com.finch.global.common.domain.enums.Provider
+import com.finch.global.exception.handleException.InvalidAuthProviderException
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.stereotype.Component
 
@@ -30,6 +31,7 @@ class UserDomainService {
             Provider.KAKAO -> User.createKakaoUserBuilder(info as KakaoUserInfoDto, token)
             Provider.APPLE -> User.createAppleUserBuilder(info as AppleUserInfoDto, token)
             Provider.GOOGLE -> User.createGoogleUserBuilder(info as GoogleUserInfoDto, token)
+            Provider.LOCAL -> throw InvalidAuthProviderException()
         }
     }
 
